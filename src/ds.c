@@ -15,7 +15,12 @@
  */
 Node *create_question_node(const char *question) {
     // TODO: Implement this function
-    return NULL;
+    Node* new = (Node*)malloc(sizeof(Node));
+    new->text = strdup(question);
+    new->isQuestion = 1;
+    new->yes = NULL;
+    new->no = NULL;
+    return new;
 }
 
 /* TODO 2: Implement create_animal_node
@@ -24,7 +29,12 @@ Node *create_question_node(const char *question) {
  */
 Node *create_animal_node(const char *animal) {
     // TODO: Implement this function
-    return NULL;
+    Node* new = (Node*)malloc(sizeof(Node));
+    new->text = strdup(animal);
+    new->isQuestion = 0;
+    new->yes = NULL;
+    new->no = NULL;
+    return new;
 }
 
 /* TODO 3: Implement free_tree (recursive)
@@ -38,6 +48,11 @@ Node *create_animal_node(const char *animal) {
  */
 void free_tree(Node *node) {
     // TODO: Implement this function
+    if(!node)  return;   
+    free_tree(node->yes);
+    free_tree(node->no);
+    free(node->text);
+    free(node);
 }
 
 /* TODO 4: Implement count_nodes (recursive)
@@ -46,7 +61,8 @@ void free_tree(Node *node) {
  */
 int count_nodes(Node *root) {
     // TODO: Implement this function
-    return 0;
+    if(!root) return 0;
+    return 1 + count_nodes(root->yes) + count_nodes(root->no);
 }
 
 /* ========== Frame Stack (for iterative tree traversal) ========== */
@@ -58,6 +74,9 @@ int count_nodes(Node *root) {
  */
 void fs_init(FrameStack *s) {
     // TODO: Implement this function
+    s->capacity = 16;
+    s->size = 0;
+    s->frames = (Frame*)malloc(s->capacity * sizeof(Frame));
 }
 
 /* TODO 6: Implement fs_push
@@ -68,6 +87,13 @@ void fs_init(FrameStack *s) {
  */
 void fs_push(FrameStack *s, Node *node, int answeredYes) {
     // TODO: Implement this function
+    if(s->size >= s->capacity){
+        s->capacity *= 2;
+        s->frames = (Frame*)realloc(s->frames, s->capacity * sizeof(Frame));
+    }
+    s->frames[s->size].node = node;
+    s->frames[s->size].answeredYes = answeredYes;
+    s->size++;
 }
 
 /* TODO 7: Implement fs_pop
@@ -76,9 +102,9 @@ void fs_push(FrameStack *s, Node *node, int answeredYes) {
  * Note: No need to check if empty - caller should use fs_empty() first
  */
 Frame fs_pop(FrameStack *s) {
-    Frame dummy = {NULL, -1};
     // TODO: Implement this function
-    return dummy;
+    s->size--;
+    return s->frames[s->size];
 }
 
 /* TODO 8: Implement fs_empty
@@ -86,7 +112,7 @@ Frame fs_pop(FrameStack *s) {
  */
 int fs_empty(FrameStack *s) {
     // TODO: Implement this function
-    return 1;
+    return (!s->size) ? 1 : 0; // im cool ik
 }
 
 /* TODO 9: Implement fs_free
@@ -96,6 +122,14 @@ int fs_empty(FrameStack *s) {
  */
 void fs_free(FrameStack *s) {
     // TODO: Implement this function
+    for(int16_t i = 0; i < s->size; i++){
+        if(s->frames[i].node){
+            free(s->frames[i].node);
+        }
+    }
+    s->frames = NULL;
+    s->size = 0;
+    s->capacity = 0;
 }
 
 /* ========== Edit Stack (for undo/redo) ========== */
