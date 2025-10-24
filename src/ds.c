@@ -257,7 +257,7 @@ int q_dequeue(Queue *q, Node **node, int *id) {
  */
 int q_empty(Queue *q) {
     // TODO: Implement this function
-    return (q->size) ? 0 : 1;
+    return (!q->size) ? 1 : 0;
 }
 
 /* TODO 19: Implement q_free
@@ -266,8 +266,12 @@ int q_empty(Queue *q) {
  */
 void q_free(Queue *q) {
     // TODO: Implement this function
-    
-
+    Node* temp = NULL;
+    int tempID = 0;
+    while(!q_empty(q)){
+        q_dequeue(q, &temp, &tempID);
+    }
+    // queue should be empty by now
 
 
 }
