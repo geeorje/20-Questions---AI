@@ -122,11 +122,7 @@ int fs_empty(FrameStack *s) {
  */
 void fs_free(FrameStack *s) {
     // TODO: Implement this function
-    for(int16_t i = 0; i < s->size; i++){
-        if(s->frames[i].node){
-            free(s->frames[i].node);
-        }
-    }
+    free(s->frames);
     s->frames = NULL;
     s->size = 0;
     s->capacity = 0;
